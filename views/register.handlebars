@@ -1,4 +1,11 @@
+<!-- views/register.handlebars -->
 <h1>Register</h1>
+{{#if error}}
+<p style="color: red;">{{error}}</p>
+{{/if}}
+{{#if success}}
+<p style="color: green;">{{success}}</p>
+{{/if}}
 <form action="/auth/register" method="POST">
   <div>
     <label for="username">Username:</label>
