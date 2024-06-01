@@ -36,53 +36,21 @@ app.use(
   })
 );
 
+app.use(flash());
+
 sessionStore.sync();
 
 const authRoutes = require('./routes/authRoutes');
-const chatRoutes = require('./routes/api/chatRoutes');
+const chatApiRoutes = require('./routes/api/chatRoutes'); // Use renamed identifier
 const userRoutes = require('./routes/api/userRoutes');
+const chatRoutes = require('./routes/chatRoutes'); // Add this new route
 
 app.use('/auth', authRoutes);
-app.use('/api/chat', chatRoutes);
+app.use('/api/chat', chatApiRoutes); // Use renamed identifier
 app.use('/api/users', userRoutes);
+app.use('/chat', chatRoutes); // Add this new route
 
 app.get('/', (req, res) => {
-  res.redirect('/auth/login');
-});
-
-app.post('/auth/register', async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    const hash = await bcrypt.hash(password, 10);
-    await User.create({ username, password: hash });
-
-  
-    req.flash('success', 'Thank you for signing up!');
-
-    res.redirect('/auth/login');
-  } catch (error) {
-    res.status(500).send('Error registering new user.');
-  }
-});
-
-app.post('/auth/login', async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    const user = await User.findOne({ where: { username } });
-    if (user && await bcrypt.compare(password, user.password)) {
-      req.session.userId = user.id;
-      res.redirect('/chat');
-    } else {
-      req.flash('error', 'Invalid credentials.');
-      res.redirect('/auth/login');
-    }
-  } catch (error) {
-    res.status(500).send('Error logging in.');
-  }
-});
-
-app.get('/auth/logout', (req, res) => {
-  req.session.destroy();
   res.redirect('/auth/login');
 });
 
