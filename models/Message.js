@@ -1,14 +1,60 @@
-module.exports = (sequelize, DataTypes) => {
-  const Message = sequelize.define('Message', {
-    content: {
-      type: DataTypes.TEXT,
-      allowNull: false
-    },
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    }
-  });
+//module.exports = (sequelize, DataTypes) => {
+ // const Message = sequelize.define('Message', {
+    //content: {
+   //   type: DataTypes.TEXT,
+   //   allowNull: false
+//    },
+  //  userId: {
+     // type: DataTypes.INTEGER,
+    //  allowNull: false
+  //  }
+  //});
 
-  return Message;
-};
+  //return Message;
+//};
+
+
+const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../config/connection');
+
+class Message extends Model {}
+
+Message.init(
+  { 
+    id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+
+  content: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+
+// Store a reference of the `id` of the `User` that owns this Message
+user_id: {
+  type: DataTypes.INTEGER,
+  references: {
+    model: 'user',
+    key: 'id',
+  },
+},
+  },
+
+  {
+    sequelize,
+    timestamps: false,
+    freezeTableName: true,
+    underscored: true,
+    modelName: 'message'
+  }
+);
+
+module.exports = Message;
