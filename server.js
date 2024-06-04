@@ -38,16 +38,22 @@ app.use(
 
 app.use(flash());
 
+app.use(flash());
+
 sessionStore.sync();
 
 const authRoutes = require('./routes/authRoutes');
 const chatApiRoutes = require('./routes/api/chatRoutes'); // Use renamed identifier
+const chatApiRoutes = require('./routes/api/chatRoutes'); // Use renamed identifier
 const userRoutes = require('./routes/api/userRoutes');
+const chatRoutes = require('./routes/chatRoutes'); // Add this new route
 const chatRoutes = require('./routes/chatRoutes'); // Add this new route
 
 app.use('/auth', authRoutes);
 app.use('/api/chat', chatApiRoutes); // Use renamed identifier
+app.use('/api/chat', chatApiRoutes); // Use renamed identifier
 app.use('/api/users', userRoutes);
+app.use('/chat', chatRoutes); // Add this new route
 app.use('/chat', chatRoutes); // Add this new route
 
 app.get('/', (req, res) => {
