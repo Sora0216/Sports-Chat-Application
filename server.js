@@ -4,31 +4,33 @@ const flash = require('express-flash');
 const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const exphbs = require('express-handlebars');
-const hbs = exphbs.create({});
+const http = require('http');
+const socketIO = require('socket.io');
 const path = require('path');
-const socketio = require('socket.io');
-const http = require("http");
-
 const sequelize = require('./config/connection');
 const { User, Message } = require('./models');
-
 const app = express();
 const server = http.createServer(app);
-const io = socketio(server);
-
+const io = socketIO(server);
 const sessionStore = new SequelizeStore({
   db: sequelize,
   tableName: 'Sessions'
 });
-
-app.engine('handlebars', exphbs());
+const hbs = exphbs.create({
+  helpers: {
+    ifCond: function (v1, v2, options) {
+      if (v1 === v2) {
+        return options.fn(this);
+      }
+      return options.inverse(this);
+    }
+  }
+});
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -37,67 +39,63 @@ app.use(
     saveUninitialized: false
   })
 );
-
 app.use(flash());
-
-app.use(flash());
-
 sessionStore.sync();
-
 const authRoutes = require('./routes/authRoutes');
-const chatApiRoutes = require('./routes/api/chatRoutes'); // Use renamed identifier
-const chatApiRoutes = require('./routes/api/chatRoutes'); // Use renamed identifier
+const chatApiRoutes = require('./routes/api/chatRoutes');
 const userRoutes = require('./routes/api/userRoutes');
-const chatRoutes = require('./routes/chatRoutes'); // Add this new route
-const chatRoutes = require('./routes/chatRoutes'); // Add this new route
-
-app.use(express.static(path.join(__dirname, 'public')));
+const chatRoutes = require('./routes/chatRoutes');
 app.use('/auth', authRoutes);
-app.use('/api/chat', chatApiRoutes); // Use renamed identifier
-app.use('/api/chat', chatApiRoutes); // Use renamed identifier
+app.use('/api/chat', chatApiRoutes);
 app.use('/api/users', userRoutes);
-app.use('/chat', chatRoutes); // Add this new route
-app.use('/chat', chatRoutes); // Add this new route
-
+app.use('/chat', chatRoutes);
 app.get('/', (req, res) => {
-  res.redirect('/auth/login');
+  res.render('login', { error: req.flash('error') });
 });
-
-app.get('/', (req,res) => {
-  res.render('home');
+app.get('/chat', (req, res) => {
+  if (!req.session.userId) {
+    return res.redirect('/');
+  }
+  res.render('chat', { username: req.session.username });
 });
-
-io.on('connection', (socket) => {
-  console.log('New client connected');
-
-  // Welcome current user
-  socket.emit('message', 'Welcome to SportsChat!');
-
-  // Broadcast when a user connects
-  socket.broadcast.emit('message', 'A user has joined the chat');
-
-  // Runs when client disconnects
-  socket.on('disconnect', () => {
-    io.emit('message', 'A user has left the chat');
+io.on('connection', async (socket) => {
+  console.log('New WebSocket connection');
+  socket.on('joinRoom', async ({ username, room }) => {
+    socket.join(room);
+    console.log(`${username} has joined room: ${room}`);
+    try {
+      const messages = await Message.findAll({
+        where: { room },
+        include: [{ model: User, attributes: ['username'] }],
+        order: [['createdAt', 'ASC']]
+      });
+      socket.emit('previousMessages', messages);
+    } catch (error) {
+      console.error('Error retrieving messages:', error);
+    }
   });
-
-    // Listen for ChatMessage
-    socket.on('chatMessage', msg => {
-      io.emit('message', msg);
-    });
+  
+  socket.on('chatMessage', async (msg) => {
+    try {
+      const user = await User.findOne({ where: { username: msg.username } });
+      if (user) {
+        const newMessage = await Message.create({
+          content: msg.message,
+          userId: user.id,
+          room: msg.room 
+        });
+        io.to(msg.room).emit('message', { username: user.username, message: newMessage.content });
+      }
+    } catch (error) {
+      console.error('Error handling chat message:', error);
+    }
+  });
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
 });
-
-// turn on connection to db and server
 const PORT = process.env.PORT || 3000;
-sequelize.sync({ force: false }).then(() => {
-  app.listen(PORT, () => console.log('Now listening'));
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
-
-
-
-
-//const PORT = process.env.PORT || 3000;
-//server.listen(PORT, () => {
-  //console.log(`Server running on port ${PORT}`);
-//});
 
