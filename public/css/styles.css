@@ -1,16 +1,14 @@
+html,
+body {
+      height: 100%;
+      margin: 0;
+    }
+    
 #font-title {
   font-family: "Black Ops One", system-ui;
   font-weight: 400;
   font-style: normal;
 }
-
-body, html {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  }
 
 .fixed-bg {
   position: absolute;
@@ -21,20 +19,4 @@ body, html {
   background-size: cover;
   background-position: center;
   z-index: -1;
-}
-
-.chat-bg {
-  display: flex;
-  background-size: cover;
-  background-position: center;
-  flex-direction: column;
-  flex: 1 1 auto;
-  border-radius: 1rem;
-  height: 100%;
-  padding: 1rem;
-}
-
-.active-room {
-  background-color: #1C64F2;
-  color: white;
 }
