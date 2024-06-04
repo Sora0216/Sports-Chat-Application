@@ -17,9 +17,9 @@ Luis Aldaz, Tyler Alberts, Scott Chen, Alyssa Hanewinkel, Roberto Martinez
     • Socket.io
 
 ## Application Image
-https://github.com/Sora0216/Sports-Chat-Application/assets/157747737/4f3b3f56-f41e-44d4-9857-84ec0d034015
+![Screenshot 2024-06-04 at 9 56 12 AM](https://github.com/Sora0216/Sports-Chat-Application/assets/157747737/e429b365-2370-4381-bdb9-d39866d950a0)
 
-https://github.com/Sora0216/Sports-Chat-Application/assets/157747737/beb23f87-f502-4e90-8e5f-d557eef27013
+![Screenshot 2024-06-04 at 9 55 48 AM](https://github.com/Sora0216/Sports-Chat-Application/assets/157747737/3de6346e-0204-4256-bcdf-5f8433421518)
 
 ## URLs
 https://github.com/Sora0216/Sports-Chat-Application
