@@ -6,20 +6,22 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const exphbs = require('express-handlebars');
 const hbs = exphbs.create({});
 const path = require('path');
-const socketIO = require('socket.io');
+const socketio = require('socket.io');
+const http = require("http");
 
 const sequelize = require('./config/connection');
 const { User, Message } = require('./models');
 
 const app = express();
-const server = require('http').createServer(app);
-const io = socketIO(server);
+const server = http.createServer(app);
+const io = socketio(server);
 
 const sessionStore = new SequelizeStore({
   db: sequelize,
   tableName: 'Sessions'
 });
 
+app.engine('handlebars', exphbs());
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
@@ -49,6 +51,7 @@ const userRoutes = require('./routes/api/userRoutes');
 const chatRoutes = require('./routes/chatRoutes'); // Add this new route
 const chatRoutes = require('./routes/chatRoutes'); // Add this new route
 
+app.use(express.static(path.join(__dirname, 'public')));
 app.use('/auth', authRoutes);
 app.use('/api/chat', chatApiRoutes); // Use renamed identifier
 app.use('/api/chat', chatApiRoutes); // Use renamed identifier
@@ -60,16 +63,28 @@ app.get('/', (req, res) => {
   res.redirect('/auth/login');
 });
 
+app.get('/', (req,res) => {
+  res.render('home');
+});
+
 io.on('connection', (socket) => {
   console.log('New client connected');
 
-  socket.on('message', (data) => {
-    io.emit('message', data);
+  // Welcome current user
+  socket.emit('message', 'Welcome to SportsChat!');
+
+  // Broadcast when a user connects
+  socket.broadcast.emit('message', 'A user has joined the chat');
+
+  // Runs when client disconnects
+  socket.on('disconnect', () => {
+    io.emit('message', 'A user has left the chat');
   });
 
-  socket.on('disconnect', () => {
-    console.log('Client disconnected');
-  });
+    // Listen for ChatMessage
+    socket.on('chatMessage', msg => {
+      io.emit('message', msg);
+    });
 });
 
 // turn on connection to db and server
