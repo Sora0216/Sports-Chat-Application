@@ -1,20 +1,50 @@
-<!-- views/register.handlebars -->
-<h1>Register</h1>
-{{#if error}}
-<p style="color: red;">{{error}}</p>
-{{/if}}
-{{#if success}}
-<p style="color: green;">{{success}}</p>
-{{/if}}
-<form action="/auth/register" method="POST">
-  <div>
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+  <link href="/css/styles.css" rel="stylesheet" />
+</head>
+
+<body class="bg-blue-700 flex items-center justify-center h-full">
+  <div class="fixed-bg" style="background-image: url('/images/pic-login.jpg')"></div>
+  <div class="w-full max-w-md p-8 rounded"
+    style="background-color: black; box-shadow: 0px 5px 15px rgba(185, 185, 185, 0.589);">
+    <h1 id="font-title"
+      class="text-2xl font-bold mb-6 p-2 md:p-1 text-center h-12 text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 rounded-lg">
+      Sports Chat Register
+    </h1>
+    {{#if error}}
+    <div class="bg-red-500 text-white p-2 mb-4 rounded">
+      {{error}}
+    </div>
+    {{/if}}
+    <form action="/auth/register" method="POST" class="space-y-6">
+      <div>
+        <label for="username" class="block mb-2 text-sm font-medium text-white">Username:</label>
+        <input type="text" id="username" name="username" required
+          class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+      </div>
+      <div>
+        <label for="password" class="block mb-2 text-sm font-medium text-white">Password:</label>
+        <input type="password" id="password" name="password" required
+          class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+      </div>
+      <button type="submit"
+        class="w-full py-2 px-4 text-white font-medium bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 rounded-lg">
+        Register
+      </button>
+      <p class="mt-2 text-center text-sm text-white">Already have an account? <a href="/auth/login"
+          class="text-blue-600 hover:text-white">Login</a></p>
+    </form>
   </div>
-  <div>
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
-  </div>
-  <button type="submit">Register</button>
-  <p>Already have an account? <a href="/auth/login">Login</a></p>
-</form>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+</body>
+
+</html>
