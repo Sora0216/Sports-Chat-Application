@@ -4,38 +4,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chat Room</title>
-  <link rel="stylesheet" href="/styles.css">
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const socket = io();
-      const form = document.getElementById('chat-form');
-      const input = document.getElementById('message-input');
-      const messages = document.getElementById('messages');
-
-      form.addEventListener('submit', (event) => {
-        event.preventDefault();
-        socket.emit('message', { username: '{{username}}', message: input.value });
-        input.value = '';
-      });
-
-      socket.on('message', (data) => {
-        const item = document.createElement('li');
-        item.textContent = `${data.username}: ${data.message}`;
-        messages.appendChild(item);
-      });
-    });
-  </script>
+  <title>Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+  <link href="/css/styles.css" rel="stylesheet" />
 </head>
 
-<body>
-  <h1>Welcome to the Chat Room, {{username}}!</h1>
-  <ul id="messages"></ul>
-  <form id="chat-form">
-    <input id="message-input" autocomplete="off" placeholder="Type a message..." required>
-    <button type="submit">Send</button>
-  </form>
+<body class="bg-blue-700 flex items-center justify-center h-full">
+  <div class="fixed-bg" style="background-image: url('/images/pic-login.jpg')"></div>
+  <div class="w-full max-w-md p-8 rounded"
+    style="background-color: black; box-shadow: 0px 5px 15px rgba(185, 185, 185, 0.589);">
+    <h1 id="font-title"
+      class="text-2xl font-bold mb-6 p-2 md:p-1 text-center h-12 text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 rounded-lg">
+      Sports Chat Login
+    </h1>
+    {{#if error}}
+    <div class="bg-red-500 text-white p-2 mb-4 rounded">
+      {{error}}
+    </div>
+    {{/if}}
+    <form action="/auth/login" method="POST" class="space-y-6">
+      <div>
+        <label for="username" class="block mb-2 text-sm font-medium text-white">Username:</label>
+        <input type="text" id="username" name="username" required
+          class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+      </div>
+      <div>
+        <label for="password" class="block mb-2 text-sm font-medium text-white">Password:</label>
+        <input type="password" id="password" name="password" required
+          class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+      </div>
+      <button type="submit"
+        class="w-full py-2 px-4 text-white font-medium bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 rounded-lg">
+        Login
+      </button>
+      <p class="mt-2 text-center text-sm text-white">Don't have an account? <a href="/auth/register"
+          class="text-blue-600 hover:text-white">Register</a></p>
+    </form>
+  </div>
 </body>
 
 </html>
